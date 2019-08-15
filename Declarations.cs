@@ -1,7 +1,7 @@
   // Do learn to insert your names and a brief description of what the program is supposed to do!
 
   // This is a skeleton program for developing a parser for Modula-2 declarations
-  // P.D. Terry, Rhodes University
+  // Matthew Lewis, Liam Searle, Makungu Chansa
   using Library;
   using System;
   using System.Text;
@@ -73,8 +73,6 @@
       endSym       =  24;  //"END"
 
 
-    // +++++++++++++++++++++++  List of Syms +++++++++++++++++++++++++
-
     // +++++++++++++++++++++++++++++ Character Handler ++++++++++++++++++++++++++
 
     const char EOF = '\0';
@@ -103,7 +101,7 @@
 
     static Token sym;
 
-    static void GetSym() {
+    static void GetSym() { //we changed stuff here.
     // Scans for next sym from input
       StringBuilder symLex = new StringBuilder();
       int symKind = noSym;
