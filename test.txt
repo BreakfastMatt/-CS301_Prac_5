@@ -1,0 +1,7 @@
+,   .   ..   1   1000   :   ;   =   A
+Colours   END   OF   ARRAY   POINTER
+RECORD   SET   TO   TYPE   VAR
+[   ]
+(   )
+{   }
+bad_name
