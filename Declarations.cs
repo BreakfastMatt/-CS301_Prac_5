@@ -45,11 +45,31 @@
 
     // +++++++++++++++++++++++  token kinds enumeration +++++++++++++++++++++++++
 
-    const int
+    const int 
       noSym        =  0,
-      EOFSym       =  1;
+      EOFSym       =  1,
+      identSym     =  2,
+      numSym       =  3,
+      lparenSym    =  4,
+      rparenSym    =  5,
+      OFSym        =  6,
+      TOSym        =  7,
+      typeSym      =  8,
+      varSym       =  9,
+      equalSym     =  10,
+      lsquareSym   =  11,
+      rsquareSym   =  12,
+      arraySym     =  13, //
+      recordSym    =  14, //
+      singleDotSym =  15,
+      doubleDotSym =  16,
+      commaSym     =  17,
+      pointerSym   =  18,
+      semiColonSym =  19,
+      endSym       =  20;
 
-      // and others like this
+
+
 
     // +++++++++++++++++++++++++++++ Character Handler ++++++++++++++++++++++++++
 
@@ -67,7 +87,7 @@
       if (atEndOfFile) ch = EOF;
       else {
         ch = input.ReadChar();
-        atEndOfFile = ch == EOF;
+        atEndOfFile = (ch == EOF);
         if (!atEndOfFile) output.Write(ch);
       }
     } // GetChar
@@ -85,7 +105,10 @@
       StringBuilder symLex = new StringBuilder();
       int symKind = noSym;
 
-      // over to you!
+      // over to you! 
+      {
+        
+      }
 
       sym = new Token(symKind, symLex.ToString());
     } // GetSym
