@@ -106,16 +106,14 @@
       StringBuilder symLex = new StringBuilder();
       int symKind = noSym;
       while (ch > EOF && ch <= ' ') GetChar();
-      int symKind = noSym;
-
         if (Char.IsLetter(ch))
         {
             do
             {
                 symLex.Append(ch); GetChar();
-            } while (Char.IsLetterOrDigit(ch) || ch == '.'); // need to change this.
+            } while (Char.IsLetterOrDigit(ch) || ch == '.'); // need to change this. - nvm.
             //checks if special thingymobob
-            switch (symLex)
+            switch (symLex.ToString())
             {
                 case "OF":
                     symKind = OFSym;  GetChar();
@@ -150,7 +148,7 @@
                 case "END":
                     symKind = endSym; GetChar();
                     break;
-                default: symKind = identSym;
+                default: symKind = identSym; break;
             }
             symKind = identSym;
         }
@@ -169,6 +167,7 @@
             {
                 case EOF:
                     symLex = new StringBuilder("EOF"); // special case
+                    symKind = EOFSym;
                     break; // no need to GetChar
                 case '=':
                     symKind = equalSym; GetChar();
