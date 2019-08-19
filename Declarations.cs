@@ -106,6 +106,9 @@
       StringBuilder symLex = new StringBuilder();
       int symKind = noSym;
       while (ch > EOF && ch <= ' ') GetChar();
+      if (symLex.ToString() == "(*") // skip comment
+        do GetChar(); while (symLex.ToString() != "*)");
+
         if (Char.IsLetter(ch))
         {
             do
@@ -115,6 +118,10 @@
             //checks if special thingymobob
             switch (symLex.ToString())
             {
+                //case "(*":
+                    //while (symLex.ToString() != "*)") GetChar();
+                    //Accept here maybe in the future...
+                    //break;
                 case "OF":
                     symKind = OFSym;  GetChar();
                     break;
@@ -173,7 +180,23 @@
                     symKind = equalSym; GetChar();
                     break;
                 case '(':
-                    symKind = lparenSym; GetChar();
+                    GetChar();
+                    if (ch == '*'){
+                      while(true) 
+                      {
+                        GetChar();
+                        if (ch == '*')
+                          GetChar();
+                            if (ch == ')'){
+                                GetChar();
+                                GetSym();
+                                return;}
+                      }
+                    }
+                    else
+                    {
+                        symKind = lparenSym;
+                    } 
                     break;
                 case ')':
                     symKind = rparenSym; GetChar();
