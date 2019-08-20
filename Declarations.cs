@@ -375,7 +375,7 @@
                 Accept(identSym, "Identifier expected");
                 Accept(equalSym, "Expected a =");
                 Type();
-                if (sym.kind != semiColonSym)
+                if (sym.kind != semiColonSym) //this is essentially an accept without calling GetSym() 
                     Abort("Expected a ;");
             }
         }//true ==> typeSym
@@ -397,6 +397,9 @@
             Abort("Expected a TYPE or VAR keyword");
         bool isType = (sym.kind == typeSym); 
 
+      //need to fix this so that it won't infinite loop 
+      //Cannot use EOFSym to check whether the file is done or not though.....
+      //maybe check the symbol after a ; to see if TYPE or VAR follows it??
         while (true)
         {
             if (sym.kind == typeSym)
@@ -415,7 +418,7 @@
                 Declaration(false);
             }
         }
-        //Accept(semiColonSym, "Expected a ;"); //hopefully
+        Accept(EOFSym,"EOF Expected");
     } //DANK
 
     #endregion
