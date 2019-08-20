@@ -263,7 +263,7 @@
         // FieldLists = FieldList { ";" FieldList } .
         FieldList();
         while (sym.kind == semiColonSym)
-            FieldList();
+            FieldList(); 
     }
 
     static void IdentList() {
