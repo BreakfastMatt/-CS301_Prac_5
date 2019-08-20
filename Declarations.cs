@@ -141,12 +141,6 @@
                 case "SET":
                     symKind = setSym; GetChar();
                     break;
-                case ".":
-                    symKind = singleDotSym; GetChar();
-                    break;
-                case "..":
-                    symKind = doubleDotSym; GetChar();
-                    break;
                 case "POINTER":
                     symKind = pointerSym; GetChar();
                     break;
@@ -174,6 +168,15 @@
                     symLex = new StringBuilder("EOF"); // special case
                     symKind = EOFSym;
                     break; // no need to GetChar
+                case '.':
+                    symKind = singleDotSym; GetChar();
+                    if (ch == '.')
+                    {
+                        symLex.Append(ch);
+                        symKind = doubleDotSym;
+                        GetChar();
+                    }
+                    break;
                 case '=':
                     symKind = equalSym; GetChar();
                     break;
@@ -287,9 +290,9 @@
     static void Subrange() {
         // Subrange = "[" Constant ".." Constant "]" .
         Constant();
-        Accept(doubleDotSym, "Expected a '..'");
+        Accept(doubleDotSym, "Expected a ..");
         Constant();
-        Accept(rsquareSym, "Expected  ]");
+        Accept(rsquareSym, "Expected a ]");
     }
 
     static void QualIdent() {
@@ -360,9 +363,13 @@
         }
     }
 
-    static void Declaration()
+    static void Declaration(bool sw)
     {
         Accept(identSym, "Identifier expected");
+        if (sw)
+            Accept(equalSym, "Expected a ="); //true ==> typeSym
+        else
+            Accept(colonSym, "Expected a :"); //false ==> varSym
         Type();
     }
 
@@ -370,7 +377,10 @@
         while(sym.kind == typeSym || sym.kind == varSym)
         {
             GetSym();
-            Declaration();
+            if (sym.kind == typeSym)
+                Declaration(true);
+            else
+                Declaration(false);
         }
     }
 
@@ -391,11 +401,13 @@
       GetChar();                                  // Lookahead character
 
   //  To test the scanner we can use a loop like the following:
+  
       do {
         GetSym();                                 // Lookahead symbol
         OutFile.StdOut.Write(sym.kind, 3);
         OutFile.StdOut.WriteLine(" " + sym.val);  // See what we got
       } while (sym.kind != EOFSym);
+      
   //  After the scanner is debugged we shall substitute this code:
 
       GetSym();                                   // Lookahead symbol 
