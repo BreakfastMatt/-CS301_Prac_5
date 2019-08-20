@@ -18,7 +18,7 @@
   } // Token
 
   class Declarations {
-
+    
     // +++++++++++++++++++++++++ File Handling and Error handlers ++++++++++++++++++++
 
     static InFile input;
@@ -72,7 +72,7 @@
       rcurveSym    =  23,
       endSym       =  24;  //"END"
 
-
+    #region charHandler
     // +++++++++++++++++++++++++++++ Character Handler ++++++++++++++++++++++++++
 
     const char EOF = '\0';
@@ -93,7 +93,9 @@
         if (!atEndOfFile) output.Write(ch);
       }
     } // GetChar
+    #endregion 
 
+    #region Scanner
     // +++++++++++++++++++++++++++++++ Scanner ++++++++++++++++++++++++++++++++++
 
     // Declaring sym as a global variable is done for expediency - global variables
@@ -118,10 +120,6 @@
             //checks if special thingymobob
             switch (symLex.ToString())
             {
-                //case "(*":
-                    //while (symLex.ToString() != "*)") GetChar();
-                    //Accept here maybe in the future...
-                    //break;
                 case "OF":
                     symKind = OFSym;  GetChar();
                     break;
@@ -230,9 +228,9 @@
 
         sym = new Token(symKind, symLex.ToString());
     } // GetSym
+    #endregion
 
-  /*  ++++ Commented out for the moment
-
+    #region Parser
     // +++++++++++++++++++++++++++++++ Parser +++++++++++++++++++++++++++++++++++
 
     static void Accept(int wantedSym, string errorMessage) {
@@ -245,10 +243,140 @@
       if (allowedSet.Contains(sym.kind)) GetSym(); else Abort(errorMessage);
     } // Accept
 
-    static void Mod2Decl() {}
+    static void FieldList() {
+        // FieldList = [ IdentList ":" Type ] .
+        if (sym.kind == identSym)
+        {
+            IdentList();
+            Accept(colonSym, "Expected a :");
+            Type();
+        }
+        else {
+            return;
+        }
+    }
 
-  ++++++ */
+    static void FieldLists() {
+        // FieldLists = FieldList { ";" FieldList } .
+        FieldList();
+        while (sym.kind == semiColonSym)
+            FieldList();
+    }
 
+    static void IdentList() {
+        //IdentList = identifier { "," identifier }
+        Accept(identSym, "Identifier expected");
+        while (sym.kind == commaSym)
+            Accept(identSym, "Identifier expected");
+    }
+
+    static void Enumeration() {
+        // Enumeration = "(" IdentList ")".
+        IdentList();
+        Accept(rparenSym, "Expected a )");
+    } 
+
+    static void Constant() {
+        // Constant = number | identifier .
+        if (sym.kind == numSym || sym.kind == identSym)
+            GetSym();
+        else
+            Abort("Expected a number or an identifier.");
+    }
+
+    static void Subrange() {
+        // Subrange = "[" Constant ".." Constant "]" .
+        Constant();
+        Accept(doubleDotSym, "Expected a '..'");
+        Constant();
+        Accept(rsquareSym, "Expected  ]");
+    }
+
+    static void QualIdent() {
+        // QualIdent = identifier { "." identifier } .
+        Accept(identSym, "Identifier Expected");
+        while (sym.kind == singleDotSym)
+            Accept(identSym, "Identifier Expected");
+    }
+
+    static void SimpleType() {
+        // SimpleType = QualIdent [ Subrange ] | Enumeration | Subrange .
+        switch (sym.kind)
+        {
+            case identSym: //QualIdent
+                GetSym();
+                QualIdent();
+                if (sym.kind == lsquareSym)
+                    Subrange();
+                break;
+            case lparenSym: //Enumeration
+                GetSym();
+                Enumeration();
+                break;
+            case lsquareSym: //Subrange
+                GetSym();
+                Subrange();
+                break;
+            default:
+                Abort("Invalid start to SimpleType");
+                break;
+        }
+    }
+
+    static void Type() {
+        //Type = SimpleType | ArrayType | RecordType | SetType | PointerType .
+        switch (sym.kind)
+        {
+            case identSym: //SimpleType
+                GetSym();
+                SimpleType();
+                break;
+            case arraySym: // ArrayType = "ARRAY" SimpleType { "," SimpleType } "OF" Type.
+                GetSym();
+                SimpleType();
+                while (sym.kind == commaSym)
+                    SimpleType();
+                Accept(OFSym, "Expected keyword OF");
+                Type();
+                return;
+            case recordSym: // RecordType = "RECORD" FieldLists "END"
+                GetSym();
+                FieldLists();
+                Accept(endSym, "Expected keyword END");
+                break;
+            case setSym: // SetType = "SET" "OF" SimpleType .
+                GetSym();
+                Accept(OFSym, "Expected keyword OF");
+                SimpleType();
+                break;
+            case pointerSym: // PointerType = "POINTER" "TO" Type .
+                GetSym();
+                Accept(TOSym, "Expected keyword TO");
+                Type();
+                return;
+            default:
+                Abort("Invalid start to Type");
+                break;
+        }
+    }
+
+    static void Declaration()
+    {
+        Accept(identSym, "Identifier expected");
+        Type();
+    }
+
+    static void Mod2Decl() {
+        while(sym.kind == typeSym || sym.kind == varSym)
+        {
+            GetSym();
+            Declaration();
+        }
+    }
+
+    #endregion
+
+    #region MainDriverFunction
     // +++++++++++++++++++++ Main driver function +++++++++++++++++++++++++++++++
 
     public static void Main(string[] args) {
@@ -263,22 +391,21 @@
       GetChar();                                  // Lookahead character
 
   //  To test the scanner we can use a loop like the following:
-
       do {
         GetSym();                                 // Lookahead symbol
         OutFile.StdOut.Write(sym.kind, 3);
         OutFile.StdOut.WriteLine(" " + sym.val);  // See what we got
       } while (sym.kind != EOFSym);
+  //  After the scanner is debugged we shall substitute this code:
 
-  /*  After the scanner is debugged we shall substitute this code:
-
-      GetSym();                                   // Lookahead symbol
+      GetSym();                                   // Lookahead symbol 
       Mod2Decl();                                 // Start to parse from the goal symbol
       // if we get back here everything must have been satisfactory
       Console.WriteLine("Parsed correctly");
 
-  */
+  
       output.Close();
     } // Main
+    #endregion
 
-  } // Declarations
+} // Declarations
