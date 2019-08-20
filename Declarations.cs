@@ -1,7 +1,6 @@
-  // Do learn to insert your names and a brief description of what the program is supposed to do!
 
   // This is a skeleton program for developing a parser for Modula-2 declarations
-  // Matthew Lewis, Liam Searle, Makungu Chansa
+  // Matthew Lewis, Liam Searle, Makungu Chansa 
   using Library;
   using System;
   using System.Text;
@@ -116,7 +115,7 @@
             do
             {
                 symLex.Append(ch); GetChar();
-            } while (Char.IsLetterOrDigit(ch) || ch == '.'); // need to change this. - nvm.
+            } while (Char.IsLetterOrDigit(ch)); // need to change this. - nvm.
             switch (symLex.ToString())
             {
                 case "OF":
@@ -300,7 +299,7 @@
 
     static void QualIdent() {
         // QualIdent = identifier { "." identifier } .
-        Accept(identSym, "Identifier Expected");  
+        Accept(identSym, "Identifier Expected"); //GetSym 
         while (sym.kind == singleDotSym)
         {
             GetSym();
@@ -369,44 +368,62 @@
 
     static void Declaration(bool sw)
     {
-        GetSym();
         if (sw)
         {
-            Accept(identSym, "Identifier expected");
-            Accept(equalSym, "Expected a =");
+            if (sym.kind == identSym)
+            {
+                Accept(identSym, "Identifier expected");
+                Accept(equalSym, "Expected a =");
+                Type();
+                if (sym.kind != semiColonSym)
+                    Abort("Expected a ;");
+            }
         }//true ==> typeSym
         else
         {
-            IdentList();
-            Accept(colonSym, "Expected a :");
+            if (sym.kind == identSym)
+            {
+                IdentList();
+                Accept(colonSym, "Expected a :");
+                Type();
+                if (sym.kind != semiColonSym)
+                    Abort("Expected a ;");
+            }
         }//false ==> varSym
-        Type();
     }
 
     static void Mod2Decl() {
-        //add check if not typeSym or varSym
-        while(sym.kind == typeSym || sym.kind == varSym)
+        if (sym.kind != typeSym && sym.kind != varSym)
+            Abort("Expected a TYPE or VAR keyword");
+        bool isType = (sym.kind == typeSym); 
+
+        while (true)
         {
-            GetSym();
             if (sym.kind == typeSym)
+                isType = true;
+            else if (sym.kind == varSym)
+                isType = false;
+
+            if (isType)
             {
+                GetSym();
                 Declaration(true);
-                Accept(semiColonSym, "Expected a ;"); //hopefully
             }
             else
             {
+                GetSym();
                 Declaration(false);
-                Accept(semiColonSym, "Expected a ;"); //hopefully
             }
         }
-    }
+        //Accept(semiColonSym, "Expected a ;"); //hopefully
+    } //DANK
 
     #endregion
 
     #region MainDriverFunction
     // +++++++++++++++++++++ Main driver function +++++++++++++++++++++++++++++++
 
-    public static void Main(string[] args) {
+    public static void Main(string[] args) { 
       // Open input and output files from command line arguments
       if (args.Length == 0) {
         Console.WriteLine("Usage: Declarations FileName");
@@ -418,15 +435,14 @@
       GetChar();                                  // Lookahead character
 
   //  To test the scanner we can use a loop like the following:
-  
+  /*
       do {
         GetSym();                                 // Lookahead symbol
         OutFile.StdOut.Write(sym.kind, 3);
         OutFile.StdOut.WriteLine(" " + sym.val);  // See what we got
       } while (sym.kind != EOFSym);
-      
-  //  After the scanner is debugged we shall substitute this code:
-
+      */
+        //  After the scanner is debugged we shall substitute this code:
       GetSym();                                   // Lookahead symbol 
       Mod2Decl();                                 // Start to parse from the goal symbol
       // if we get back here everything must have been satisfactory
