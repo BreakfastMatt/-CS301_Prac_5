@@ -117,7 +117,6 @@
             {
                 symLex.Append(ch); GetChar();
             } while (Char.IsLetterOrDigit(ch) || ch == '.'); // need to change this. - nvm.
-            //checks if special thingymobob
             switch (symLex.ToString())
             {
                 case "OF":
@@ -149,7 +148,6 @@
                     break;
                 default: symKind = identSym; break;
             }
-            symKind = identSym;
         }
         else if (Char.IsDigit(ch))
         {
@@ -270,11 +268,15 @@
         //IdentList = identifier { "," identifier }
         Accept(identSym, "Identifier expected");
         while (sym.kind == commaSym)
+        {
+            GetSym();
             Accept(identSym, "Identifier expected");
+        }
     }
 
     static void Enumeration() {
         // Enumeration = "(" IdentList ")".
+        Accept(lparenSym, "Expceted a ("); //GetSym
         IdentList();
         Accept(rparenSym, "Expected a )");
     } 
@@ -289,6 +291,7 @@
 
     static void Subrange() {
         // Subrange = "[" Constant ".." Constant "]" .
+        Accept(lsquareSym,"Expected a ["); //GetSym
         Constant();
         Accept(doubleDotSym, "Expected a ..");
         Constant();
@@ -297,27 +300,27 @@
 
     static void QualIdent() {
         // QualIdent = identifier { "." identifier } .
-        Accept(identSym, "Identifier Expected");
+        Accept(identSym, "Identifier Expected");  
         while (sym.kind == singleDotSym)
-            Accept(identSym, "Identifier Expected");
-    }
+        {
+            GetSym();
+            Accept(identSym, "Identifier Expected"); 
+        }
+    } 
 
     static void SimpleType() {
         // SimpleType = QualIdent [ Subrange ] | Enumeration | Subrange .
         switch (sym.kind)
         {
-            case identSym: //QualIdent
-                GetSym();
+            case identSym: //QualIdent 
                 QualIdent();
                 if (sym.kind == lsquareSym)
                     Subrange();
                 break;
             case lparenSym: //Enumeration
-                GetSym();
-                Enumeration();
+                Enumeration(); 
                 break;
             case lsquareSym: //Subrange
-                GetSym();
                 Subrange();
                 break;
             default:
@@ -331,7 +334,8 @@
         switch (sym.kind)
         {
             case identSym: //SimpleType
-                GetSym();
+            case lparenSym:
+            case lsquareSym:
                 SimpleType();
                 break;
             case arraySym: // ArrayType = "ARRAY" SimpleType { "," SimpleType } "OF" Type.
@@ -365,22 +369,35 @@
 
     static void Declaration(bool sw)
     {
-        Accept(identSym, "Identifier expected");
+        GetSym();
         if (sw)
-            Accept(equalSym, "Expected a ="); //true ==> typeSym
+        {
+            Accept(identSym, "Identifier expected");
+            Accept(equalSym, "Expected a =");
+        }//true ==> typeSym
         else
-            Accept(colonSym, "Expected a :"); //false ==> varSym
+        {
+            IdentList();
+            Accept(colonSym, "Expected a :");
+        }//false ==> varSym
         Type();
     }
 
     static void Mod2Decl() {
+        //add check if not typeSym or varSym
         while(sym.kind == typeSym || sym.kind == varSym)
         {
             GetSym();
             if (sym.kind == typeSym)
+            {
                 Declaration(true);
+                Accept(semiColonSym, "Expected a ;"); //hopefully
+            }
             else
+            {
                 Declaration(false);
+                Accept(semiColonSym, "Expected a ;"); //hopefully
+            }
         }
     }
 
