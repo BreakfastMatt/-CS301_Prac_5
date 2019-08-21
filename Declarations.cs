@@ -182,15 +182,19 @@ using Library;
                 case '(':
                     GetChar();
                     if (ch == '*'){
-                      while(true) 
+                      while(true) // currently will infinite loop if comments are not closed correctly. 
                       {
                         GetChar();
-                        if (ch == '*')
-                          GetChar();
-                            if (ch == ')'){
+                            if (ch == '*')
+                            {
                                 GetChar();
-                                GetSym();
-                                return;}
+                                if (ch == ')')
+                                {
+                                    GetChar();
+                                    GetSym();
+                                    return;
+                                }
+                            }
                       }
                     }
                     else
