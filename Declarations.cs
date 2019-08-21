@@ -254,15 +254,19 @@
             Type();
         }
         else {
-            return;
+            return;  //Is this supposed to be here?  I can't remember.
         }
     }
 
     static void FieldLists() {
         // FieldLists = FieldList { ";" FieldList } .
         FieldList();
-        while (sym.kind == colonSym)
-            FieldList(); 
+        while (sym.kind == semiColonSym)
+        {
+            GetSym();
+            FieldList();
+        }
+            
     }
 
     static void IdentList() {
@@ -391,8 +395,23 @@
 
     static void TypeDecl()
     {
-        //do whatever
-        Declaration();
+        if (sym.kind == identSym)
+        {
+            Accept(identSym, "Expected an identfier"); //GetSym
+            Accept(equalSym, "Expected a =");
+            Type();
+            Accept(semiColonSym, "Expected a ;");
+        }
+        else
+        {
+            Mod2Decl();
+            return;
+        }
+
+        if (sym.kind != varSym && sym.kind != typeSym)
+            TypeDecl();
+        else
+            Mod2Decl();
     }
 
     static void Declaration()

@@ -1,6 +1,6 @@
-VAR
-  Sieve : SET OF [ 0 ..     (* this should be giving the error of "Expected a number or an identifier *)
-							(* if you add the ] after the .. then suddenly it remembers that it needs a number or an identifier before it...*)
-  Pav : SET OF [ 0 .. 4 ];
-VAR
-  Pav2 : SET OF [ 0 .. 4];
+TYPE
+  Persons = RECORD ;
+              Name, Surname : ARRAY [0 .. 10] OF CHAR;
+              Age : INTEGER;
+              HairColour : Colours;
+            END;
