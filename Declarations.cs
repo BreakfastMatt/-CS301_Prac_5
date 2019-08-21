@@ -365,62 +365,52 @@
                 break;
         }
     }
-
-    static void Declaration(bool sw)
+    
+    static void VarDecl()
     {
-        if (sw)
+        if (sym.kind == identSym)
         {
-            if (sym.kind == identSym)
-            {
-                Accept(identSym, "Identifier expected");
-                Accept(equalSym, "Expected a =");
-                Type();
-                if (sym.kind != semiColonSym) //this is essentially an accept without calling GetSym() 
-                    Abort("Expected a ;");
-            }
-        }//true ==> typeSym
+            IdentList();
+            Accept(colonSym, "Expected a :");
+            Type();
+        }
         else
         {
-            if (sym.kind == identSym)
-            {
-                IdentList();
-                Accept(colonSym, "Expected a :");
-                Type();
-                if (sym.kind != semiColonSym)
-                    Abort("Expected a ;");
-            }
-        }//false ==> varSym
+            Abort("Expected an identifier");
+        }
+
+        Declaration(); //This does the looping
     }
 
-    static void checkEndOfDecl()
+    static void TypeDecl()
     {
-        GetSym();
+        //do whatever
+        Declaration();
+    }
+
+    static void Declaration()
+    {
+        if (sym.kind == typeSym)
+        {
+            GetSym();
+            TypeDecl();
+
+        }
+        else if (sym.kind == varSym)
+        {
+            GetSym();
+            VarDecl();
+        }
+        else
+        {
+            return;
+        }
     }
 
     static void Mod2Decl() {
-        //Check to see if it's a correct start to a declaration.
-        if (sym.kind != typeSym && sym.kind != varSym)
-            Abort("Expected a TYPE or VAR keyword");
-        bool isType = (sym.kind == typeSym); 
-
-      //need to fix this so that it won't infinite loop 
-      //Cannot use EOFSym to check whether the file is done or not though.....
-      //maybe check the symbol after a ; to see if TYPE or VAR follows it??
-        while (sym.kind != varSym && sym.kind != typeSym)
-        {
-            switch (sym.kind)
-            {
-                case typeSym:
-                    GetSym();
-                    Declaration(true);
-                    break;
-                case varSym:
-                    GetSym();
-                    Declaration(false);
-                    break;
-            }
-        } 
-        Accept(EOFSym,"EOF Expected");
+        if (sym.kind == typeSym || sym.kind == varSym)
+            Declaration();
+        //Accept(EOFSym,"EOF Expected");
     }
     //DANK
     #endregion
