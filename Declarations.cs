@@ -17,7 +17,8 @@
   } // Token
 
   class Declarations {
-    
+
+    #region otherCrap
     // +++++++++++++++++++++++++ File Handling and Error handlers ++++++++++++++++++++
 
     static InFile input;
@@ -70,6 +71,7 @@
       lcurveSym    =  22,
       rcurveSym    =  23,
       endSym       =  24;  //"END"
+    #endregion 
 
     #region charHandler
     // +++++++++++++++++++++++++++++ Character Handler ++++++++++++++++++++++++++
@@ -383,6 +385,8 @@
 
         if (sym.kind != varSym && sym.kind != typeSym)
             VarDecl();
+        else
+            Mod2Decl();
     }
 
     static void TypeDecl()
