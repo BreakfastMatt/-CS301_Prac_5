@@ -14,5 +14,5 @@ TYPE
             END;
 VAR
   I, J, K : Exported.Type;
-  Class := ARRAY SmallInts of Persons;
+  Class := ARRAY SmallInts of Persons; (* := is not allowed, should be : ALSO should be OF not of *)
   Lecturer : Persons;
