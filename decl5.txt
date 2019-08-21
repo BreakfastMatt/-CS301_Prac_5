@@ -11,7 +11,7 @@ TYPE
   SmallInts = [ 1 .. 31 ];
   Persons = RECORD
               Name, Surname : ARRAY [0 .. 10] OF CHAR;
-              Age : INTEGER;;
+              Age : INTEGER;; (*According to the grammar, having two semicolons for a record is allowed...  LMAO*)
               HairColour : Colours;
             END;
 VAR

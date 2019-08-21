@@ -1,6 +1,0 @@
-TYPE
-  Persons = RECORD ;
-              Name, Surname : ARRAY [0 .. 10] OF CHAR;
-              Age : INTEGER;
-              HairColour : Colours;
-            END;
