@@ -182,7 +182,7 @@ using Library;
                 case '(':
                     GetChar();
                     if (ch == '*'){
-                      while(true) // currently will infinite loop if comments are not closed correctly. 
+                      while(ch != '\0')
                       {
                         GetChar();
                             if (ch == '*')
@@ -196,6 +196,7 @@ using Library;
                                 }
                             }
                       }
+                        Abort("Comment is closed incorrectly"); 
                     }
                     else
                     {

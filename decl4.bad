@@ -8,7 +8,7 @@ TYPE
               HairColour : Colours;
             END;
 VAR
-  I, J, K : (* use a qualified identifier - exported *} Exported.Type;
+  I, J, K : (* use a qualified identifier - exported *} Exported.Type; 
   Class : ARRAY SmallInts OF Persons;
   Lecturer : Persons;
   Dynamic : POINTER TO ARRAY [ 1 .. 100] OF INTEGER;
