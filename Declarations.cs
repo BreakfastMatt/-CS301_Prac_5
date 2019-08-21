@@ -392,7 +392,13 @@
         }//false ==> varSym
     }
 
+    static void checkEndOfDecl()
+    {
+        GetSym();
+    }
+
     static void Mod2Decl() {
+        //Check to see if it's a correct start to a declaration.
         if (sym.kind != typeSym && sym.kind != varSym)
             Abort("Expected a TYPE or VAR keyword");
         bool isType = (sym.kind == typeSym); 
@@ -400,27 +406,23 @@
       //need to fix this so that it won't infinite loop 
       //Cannot use EOFSym to check whether the file is done or not though.....
       //maybe check the symbol after a ; to see if TYPE or VAR follows it??
-        while (true)
+        while (sym.kind != varSym && sym.kind != typeSym)
         {
-            if (sym.kind == typeSym)
-                isType = true;
-            else if (sym.kind == varSym)
-                isType = false;
-
-            if (isType)
+            switch (sym.kind)
             {
-                GetSym();
-                Declaration(true);
+                case typeSym:
+                    GetSym();
+                    Declaration(true);
+                    break;
+                case varSym:
+                    GetSym();
+                    Declaration(false);
+                    break;
             }
-            else
-            {
-                GetSym();
-                Declaration(false);
-            }
-        }
+        } 
         Accept(EOFSym,"EOF Expected");
-    } //DANK
-
+    }
+    //DANK
     #endregion
 
     #region MainDriverFunction
