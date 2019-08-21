@@ -1,7 +1,7 @@
 
-  // This is a skeleton program for developing a parser for Modula-2 declarations
-  // Matthew Lewis, Liam Searle, Makungu Chansa 
-  using Library;
+// This is a skeleton program for developing a parser for Modula-2 declarations
+// Matthew Lewis, Liam Searle, Makungu Chansa 
+using Library;
   using System;
   using System.Text;
 
@@ -121,31 +121,31 @@
             switch (symLex.ToString())
             {
                 case "OF":
-                    symKind = OFSym;  GetChar();
+                    symKind = OFSym;
                     break;
                 case "TO":
-                    symKind = TOSym;  GetChar();
+                    symKind = TOSym;  
                     break;
                 case "TYPE":
-                    symKind = typeSym; GetChar();
+                    symKind = typeSym; 
                     break;
                 case "VAR":
-                    symKind = varSym; GetChar();
+                    symKind = varSym; 
                     break;
                 case "ARRAY":
-                    symKind = arraySym; GetChar();
+                    symKind = arraySym; 
                     break;
                 case "RECORD":
-                    symKind = recordSym; GetChar();
+                    symKind = recordSym; 
                     break;
                 case "SET":
-                    symKind = setSym; GetChar();
+                    symKind = setSym; 
                     break;
                 case "POINTER":
-                    symKind = pointerSym; GetChar();
+                    symKind = pointerSym; 
                     break;
                 case "END":
-                    symKind = endSym; GetChar();
+                    symKind = endSym; 
                     break;
                 default: symKind = identSym; break;
             }
@@ -253,9 +253,7 @@
             Accept(colonSym, "Expected a :");
             Type();
         }
-        else {
-            return;  //Is this supposed to be here?  I can't remember.
-        }
+        //No error will be thrown since this is entirely optional.
     }
 
     static void FieldLists() {
@@ -264,7 +262,7 @@
         while (sym.kind == semiColonSym)
         {
             GetSym();
-            FieldList();
+            FieldList(); 
         }
             
     }
@@ -374,44 +372,18 @@
 
     static void VarDecl()
     {
-        if (sym.kind == identSym)
-        {
-            IdentList();
-            Accept(colonSym, "Expected a :");
-            Type();
-            Accept(semiColonSym, "Expected a ;");
-        }
-        else
-        {
-            Mod2Decl();
-            return;
-        }
-
-        if (sym.kind != varSym && sym.kind != typeSym)
-            VarDecl();
-        else
-            Mod2Decl();
+        IdentList();
+        Accept(colonSym, "Expected a :");
+        Type();
+        Accept(semiColonSym, "Expected a ;");
     }
 
     static void TypeDecl()
     {
-        if (sym.kind == identSym)
-        {
-            Accept(identSym, "Expected an identfier"); //GetSym
-            Accept(equalSym, "Expected a =");
-            Type();
-            Accept(semiColonSym, "Expected a ;");
-        }
-        else
-        {
-            Mod2Decl();
-            return;
-        }
-
-        if (sym.kind != varSym && sym.kind != typeSym)
-            TypeDecl();
-        else
-            Mod2Decl();
+        Accept(identSym, "Expected an identfier"); //GetSym
+        Accept(equalSym, "Expected a =");
+        Type();
+        Accept(semiColonSym, "Expected a ;");
     }
 
     static void Declaration()
@@ -419,21 +391,23 @@
         if (sym.kind == typeSym)
         {
             GetSym();
-            TypeDecl();
+            while(sym.kind == identSym)
+                TypeDecl();
 
         }
         else if (sym.kind == varSym)
         {
             GetSym();
-            VarDecl();
+            while(sym.kind == identSym)
+                VarDecl();
         }
     }
 
     static void Mod2Decl() {
-        if (sym.kind == typeSym || sym.kind == varSym)
+        while (sym.kind == typeSym || sym.kind == varSym)
             Declaration();
         //doesn't need error checking if not typeSym or varSym since it is optional.
-        //Accept(EOFSym,"EOF Expected");
+        Accept(EOFSym,"EOF Expected");
     }
     //DANK
     #endregion
