@@ -259,7 +259,7 @@
     static void FieldLists() {
         // FieldLists = FieldList { ";" FieldList } .
         FieldList();
-        while (sym.kind == semiColonSym)
+        while (sym.kind == colonSym)
             FieldList(); 
     }
 
@@ -365,7 +365,7 @@
                 break;
         }
     }
-    
+
     static void VarDecl()
     {
         if (sym.kind == identSym)
@@ -373,13 +373,22 @@
             IdentList();
             Accept(colonSym, "Expected a :");
             Type();
+            Accept(semiColonSym, "Expected a ;");
         }
         else
         {
-            Abort("Expected an identifier");
+            Mod2Decl();
+            return;
         }
 
-        Declaration(); //This does the looping
+        if (sym.kind != varSym && sym.kind != typeSym)
+            VarDecl();
+        /*
+        //This does the looping
+        if (sym.kind != varSym && sym.kind != typeSym)
+            VarDecl();
+        else
+            Declaration(); */
     }
 
     static void TypeDecl()
@@ -401,15 +410,12 @@
             GetSym();
             VarDecl();
         }
-        else
-        {
-            return;
-        }
     }
 
     static void Mod2Decl() {
         if (sym.kind == typeSym || sym.kind == varSym)
             Declaration();
+        //doesn't need error checking if not typeSym or varSym since it is optional.
         //Accept(EOFSym,"EOF Expected");
     }
     //DANK
