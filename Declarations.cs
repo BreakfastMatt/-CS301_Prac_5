@@ -378,7 +378,7 @@
         {
             Abort("Expected an identifier");
         }
-
+        Console.WriteLine("Symbol: " + sym.kind.ToString());
         Declaration(); //This does the looping
     }
 
@@ -400,6 +400,12 @@
         {
             GetSym();
             VarDecl();
+        }
+        else if (sym.kind == identSym)
+        {
+            IdentList();
+            Accept(colonSym, "Expected a :");
+            Type();
         }
         else
         {
