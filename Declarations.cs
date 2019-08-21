@@ -239,6 +239,11 @@ using Library;
 
     #region Parser
     // +++++++++++++++++++++++++++++++ Parser +++++++++++++++++++++++++++++++++++
+    static void SYNC()//skips code untill it reaches a semi colon 
+    {
+        while (sym.kind != semiColonSym)
+            GetSym();
+    }
 
     static void Accept(int wantedSym, string errorMessage) {
     // Checks that lookahead token is wantedSym

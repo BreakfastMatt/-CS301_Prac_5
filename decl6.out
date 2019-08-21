@@ -1,0 +1,18 @@
+TYPE
+  Colours = ( red, orange, yellow, green, blue, indigo, violet ); (* Should end in a ; *)
+  FirstColours = Colours [ red .. orange ];
+VAR
+  Dynamic : POINTER TO ARRAY [ 1 .. 100] OF INTEGER;  (* Square bracket here was left out *)
+  Sieve : SET OF [ 0 .. 4000 ];
+  BoolSieve : ARRAY [ 0 .. 4000] OF BOOLEAN;  (* the ; after BoolSieve is wrong, should be a : *)
+TYPE
+  SmallInts = [ 1 .. 31 ]; (*This is wrong.... (31H is not a valid identifier or number) *)
+  Persons = RECORD
+              Name, Surname : ARRAY [0 .. 10] OF CHAR;
+              Age : INTEGER;;   (* multiple semicolons are allowed in this case *)
+              HairColour : Colours;
+            END;
+VAR
+  I, J, K : Exported.Type;
+  Class : ARRAY SmallInts OF Persons; (* := is not allowed, should be : ALSO should be OF not of *)
+  Lecturer : Persons;
