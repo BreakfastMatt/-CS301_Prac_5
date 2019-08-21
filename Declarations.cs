@@ -383,12 +383,6 @@
 
         if (sym.kind != varSym && sym.kind != typeSym)
             VarDecl();
-        /*
-        //This does the looping
-        if (sym.kind != varSym && sym.kind != typeSym)
-            VarDecl();
-        else
-            Declaration(); */
     }
 
     static void TypeDecl()
