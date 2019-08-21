@@ -1,5 +1,5 @@
 TYPE
-  Colours = ( red, orange, yellow, green, blue, indigo, violet )
+  Colours = ( red, orange, yellow, green, blue, indigo, violet ) (* Should end in a ; *)
   FirstColours = Colours [ red .. orange ];
 VAR
   Dynamic : POINTER TO ARRAY [ 1 .. 100 OF INTEGER;  (* Square bracket here was left out *)
